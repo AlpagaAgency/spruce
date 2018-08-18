@@ -1,0 +1,19 @@
+# Node Package Manager
+node_modules
+
+# Vagrant
+bin
+.vagrant
+
+# Developer shit
+/.local/
+/nbproject/
+.DS_Store
+Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+/logfile
+/node_modules
+Gruntfile.js
+package.json
