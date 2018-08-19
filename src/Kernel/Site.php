@@ -21,7 +21,7 @@ use Twig_SimpleFunction;
 use Twig_SimpleFilter;
 use Exception;
 
-class CoreSite extends TimberSite {
+class Site extends TimberSite {
 
 	protected $menus = [
 		'header_menu' => 'Header Menu',
@@ -41,7 +41,6 @@ class CoreSite extends TimberSite {
 
 	public function __construct() {
 		$this->tplReference = $this->useDefaultTheme ? $this->baseTplReference : $this->customTplReference;
-		
 		add_theme_support( 'post-formats' );
 		add_theme_support( 'post-thumbnails' );
 		add_theme_support( 'menus' );
