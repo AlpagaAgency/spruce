@@ -15,7 +15,9 @@ use Timber\Site as TimberSite;
 use Timber\Image as TimberImage;
 use Timber\Loader as TimberLoader;
 use Timber\Menu as TimberMenu;
+use Spruce\Common\Helper\PolylangTranslationRegister;
 use Swift_SmtpTransport;
+use Twig_Extension_StringLoader;
 use Swift_Mailer;
 use Twig_SimpleFunction;
 use Twig_SimpleFilter;
@@ -28,6 +30,8 @@ class Site extends TimberSite {
 		'social_menu' => 'Social Menu',
 		'footer_menu' => 'Footer Menu',
 	];
+
+	protected $twigFolder = array('templates', 'views');
 
 	protected $settings = [
 		'Theme General Settings' => 'Theme Settings',
@@ -84,7 +88,7 @@ class Site extends TimberSite {
 
 	public function define_twig_folder()
 	{
-		Timber::$dirname = array('templates', 'views');
+		Timber::$dirname = $this->twigFolder;
 	}
 
 	public function admin_styles() {
@@ -147,7 +151,7 @@ class Site extends TimberSite {
 		// add header_menu to Timber Context
 		add_filter('timber_context', function($data) use ($menus) {
 			foreach ($menus as $key => $menu):
-				$data[$key] = new Timber\Menu($key);
+				$data[$key] = new TimberMenu($key);
 			endforeach;
 			//
 			return $data;
@@ -163,7 +167,7 @@ class Site extends TimberSite {
 	}
 
 	function add_to_context( $context ) {
-		$context['menu'] = new Timber\Menu();
+		$context['menu'] = new TimberMenu();
 		$context['site'] = $this;
 		if (function_exists("get_fields")) {
 			if (get_fields("options") !== null)
