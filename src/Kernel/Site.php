@@ -5,17 +5,17 @@ namespace Spruce\Kernel;
 use Spruce\Storage\Database;
 use Spruce\HttpFoundation\Request;
 use Spruce\Common\Collections\Collection;
-
 use Spruce\Common\Shortcode as Shortcode;
 use Spruce\Common\Helper as Helper;
 use Spruce\Utility\StringTransformator;
+use Spruce\Common\Helper\PolylangTranslationRegister;
 
 use Timber\Timber as Timber;
 use Timber\Site as TimberSite;
 use Timber\Image as TimberImage;
 use Timber\Loader as TimberLoader;
 use Timber\Menu as TimberMenu;
-use Spruce\Common\Helper\PolylangTranslationRegister;
+
 use Swift_SmtpTransport;
 use Twig_Extension_StringLoader;
 use Swift_Mailer;
@@ -38,6 +38,7 @@ class Site extends TimberSite {
 		'Social Settings' => 'Social Settings',
 	];
 
+	protected $factories = array();
 	public $tplReference;
 	protected $customTplReference = "layouts/custom.twig";
 	protected $baseTplReference = "layouts/theme.twig";
@@ -45,6 +46,19 @@ class Site extends TimberSite {
 
 	public function __construct() {
 		$this->tplReference = $this->useDefaultTheme ? $this->baseTplReference : $this->customTplReference;
+		$this->factories = new Collection();
+		$this->add_theme_support();
+		$this->add_actions();
+		$this->remove_actions();
+		$this->add_filters();
+		$this->add_menu_location();
+		$this->define_twig_folder();
+		$this->add_factories();
+		parent::__construct();
+	}
+
+	protected function add_theme_support()
+	{
 		add_theme_support( 'post-formats' );
 		add_theme_support( 'post-thumbnails' );
 		add_theme_support( 'menus' );
@@ -57,12 +71,17 @@ class Site extends TimberSite {
 			'header-text' => array( 'site-title', 'site-description' ),
 		));
 
-		add_action( 'widgets_init', array($this, 'register_widgets') );
-		add_filter( 'timber_context', array( $this, 'add_to_context' ) );
-		add_filter( 'get_twig', array( $this, 'add_to_twig' ) );
-		add_filter('the_generator', function() {} );
-		add_filter('show_admin_bar', '__return_false');
+		return $this;
+	}
 
+	protected function add_factories()
+	{
+
+	}
+
+	protected function add_actions()
+	{
+		add_action( 'widgets_init', array($this, 'register_widgets') );
 		add_action( 'init', array( $this, 'register_post_types' ) );
 		add_action( 'init', function() {
 			if (current_user_can('administrator')) 
@@ -75,15 +94,28 @@ class Site extends TimberSite {
 		add_action( 'init', array( $this, 'register_taxonomies' ) );
 		add_action( 'admin_menu', array( $this, 'remove_menus' ) );
 		add_action( 'init', array( $this, 'disable_emojis' ));
-
-		add_filter( 'wpseo_metabox_prio', function() { return 'low'; } );
-
 		add_action('admin_head', array( $this, 'admin_styles' ));
 
+		return $this;
+	}
+
+	protected function remove_actions()
+	{
 		remove_action('wp_head', 'wp_generator');
-		$this->add_menu_location();
-		$this->define_twig_folder();
-		parent::__construct();
+
+		return $this;
+	}
+
+	protected function add_filters () 
+	{
+		add_filter( 'timber_context', array( $this, 'add_to_context' ) );
+		add_filter( 'get_twig', array( $this, 'add_to_twig' ) );
+		add_filter('the_generator', function() {} );
+		add_filter('show_admin_bar', '__return_false');
+		add_filter('upload_mimes', array($this, 'add_mimes_types_for_upload'));
+		add_filter( 'wpseo_metabox_prio', function() { return 'low'; } );
+
+		return $this;
 	}
 
 	public function define_twig_folder()
@@ -123,7 +155,7 @@ class Site extends TimberSite {
 		}
 	}
 
-	public function remove_menus(){
+	protected function remove_menus(){
 		// remove_menu_page( 'index.php' );                  //Dashboard
 		remove_menu_page( 'jetpack' );                    //Jetpack* 
 		// remove_menu_page( 'edit.php' );                   //Posts
@@ -138,7 +170,7 @@ class Site extends TimberSite {
 		// remove_menu_page( 'edit.php?post_type=acf-field-group' );        //ACF
 	}
 
-	function add_menu_location() {
+	protected function add_menu_location() {
 		// add header_menu to Wordpress
 		$menus = $this->menus;
 		$tr = function_exists('pll_the_languages') ? "pll__" : "__";
@@ -158,11 +190,11 @@ class Site extends TimberSite {
 		});
 	}
 
-	function register_post_types() {
+	public function register_post_types() {
 		//this is where you can register custom post types
 	}
 
-	function register_taxonomies() {
+	public function register_taxonomies() {
 		//this is where you can register custom taxonomies
 	}
 
@@ -183,7 +215,7 @@ class Site extends TimberSite {
 	function add_to_twig( $twig ) {
 		/* this is where you can add your own functions to twig */
 		$twig->addExtension( new Twig_Extension_StringLoader() );
-		// $twig->addFilter('myfoo', new Twig_SimpleFilter('myfoo', array($this, 'myfoo')));
+
 		$twig->addFunction(new Twig_SimpleFunction('s', function() {
 			// 
 			print "<pre>";
@@ -296,6 +328,21 @@ class Site extends TimberSite {
 		}
 
 		return $urls;
+	}
+
+	public function add_mimes_types_for_upload($mimes) 
+	{
+		$mimes['svg'] = 'image/svg+xml';
+		return $mimes;
+	}
+
+	static public function get_acf_value($acf, $node) 
+	{
+		//
+		if (!isset($acf[$node]))
+			return [];
+		//
+		return $acf[$node]["value"];
 	}
 
 }
