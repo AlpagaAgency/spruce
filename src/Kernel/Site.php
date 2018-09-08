@@ -9,6 +9,7 @@ use Spruce\Common\Shortcode as Shortcode;
 use Spruce\Common\Helper as Helper;
 use Spruce\Utility\StringTransformator;
 use Spruce\Common\Helper\PolylangTranslationRegister;
+use Spruce\Utility\Debug;
 
 use Timber\Timber as Timber;
 use Timber\Site as TimberSite;
@@ -155,7 +156,7 @@ class Site extends TimberSite {
 		}
 	}
 
-	protected function remove_menus(){
+	public function remove_menus(){
 		// remove_menu_page( 'index.php' );                  //Dashboard
 		remove_menu_page( 'jetpack' );                    //Jetpack* 
 		// remove_menu_page( 'edit.php' );                   //Posts

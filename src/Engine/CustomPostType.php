@@ -113,6 +113,12 @@ class CustomPostType {
      */
     public $textdomain = 'cpt';
 
+
+    static public function translate($text, $domain="default") {
+        $fn = function_exists("pll__") ? "pll__" : "__";
+        return $fn($text, $domain);
+    }
+
     /**
      * Constructor
      *
@@ -399,19 +405,19 @@ class CustomPostType {
 
         // Default labels.
         $labels = array(
-            'name'               => sprintf( __( '%s', $this->textdomain ), $plural ),
-            'singular_name'      => sprintf( __( '%s', $this->textdomain ), $singular ),
-            'menu_name'          => sprintf( __( '%s', $this->textdomain ), $plural ),
-            'all_items'          => sprintf( __( '%s', $this->textdomain ), $plural ),
-            'add_new'            => __( 'Add New', $this->textdomain ),
-            'add_new_item'       => sprintf( __( 'Add New %s', $this->textdomain ), $singular ),
-            'edit_item'          => sprintf( __( 'Edit %s', $this->textdomain ), $singular ),
-            'new_item'           => sprintf( __( 'New %s', $this->textdomain ), $singular ),
-            'view_item'          => sprintf( __( 'View %s', $this->textdomain ), $singular ),
-            'search_items'       => sprintf( __( 'Search %s', $this->textdomain ), $plural ),
-            'not_found'          => sprintf( __( 'No %s found', $this->textdomain ), $plural ),
-            'not_found_in_trash' => sprintf( __( 'No %s found in Trash', $this->textdomain ), $plural ),
-            'parent_item_colon'  => sprintf( __( 'Parent %s:', $this->textdomain ), $singular )
+            'name'               => sprintf( self::translate( '%s', $this->textdomain ), $plural ),
+            'singular_name'      => sprintf( self::translate( '%s', $this->textdomain ), $singular ),
+            'menu_name'          => sprintf( self::translate( '%s', $this->textdomain ), $plural ),
+            'all_items'          => sprintf( self::translate( '%s', $this->textdomain ), $plural ),
+            'add_new'            => self::translate( 'Add New', $this->textdomain ),
+            'add_new_item'       => sprintf( self::translate( 'Add New %s', $this->textdomain ), $singular ),
+            'edit_item'          => sprintf( self::translate( 'Edit %s', $this->textdomain ), $singular ),
+            'new_item'           => sprintf( self::translate( 'New %s', $this->textdomain ), $singular ),
+            'view_item'          => sprintf( self::translate( 'View %s', $this->textdomain ), $singular ),
+            'search_items'       => sprintf( self::translate( 'Search %s', $this->textdomain ), $plural ),
+            'not_found'          => sprintf( self::translate( 'No %s found', $this->textdomain ), $plural ),
+            'not_found_in_trash' => sprintf( self::translate( 'No %s found in Trash', $this->textdomain ), $plural ),
+            'parent_item_colon'  => sprintf( self::translate( 'Parent %s:', $this->textdomain ), $singular )
         );
 
 
@@ -498,23 +504,23 @@ class CustomPostType {
 
         // Default labels.
         $labels = array(
-            'name'                       => sprintf( __( '%s', $this->textdomain ), $plural ),
-            'singular_name'              => sprintf( __( '%s', $this->textdomain ), $singular ),
-            'menu_name'                  => sprintf( __( '%s', $this->textdomain ), $plural ),
-            'all_items'                  => sprintf( __( 'All %s', $this->textdomain ), $plural ),
-            'edit_item'                  => sprintf( __( 'Edit %s', $this->textdomain ), $singular ),
-            'view_item'                  => sprintf( __( 'View %s', $this->textdomain ), $singular ),
-            'update_item'                => sprintf( __( 'Update %s', $this->textdomain ), $singular ),
-            'add_new_item'               => sprintf( __( 'Add New %s', $this->textdomain ), $singular ),
-            'new_item_name'              => sprintf( __( 'New %s Name', $this->textdomain ), $singular ),
-            'parent_item'                => sprintf( __( 'Parent %s', $this->textdomain ), $plural ),
-            'parent_item_colon'          => sprintf( __( 'Parent %s:', $this->textdomain ), $plural ),
-            'search_items'               => sprintf( __( 'Search %s', $this->textdomain ), $plural ),
-            'popular_items'              => sprintf( __( 'Popular %s', $this->textdomain ), $plural ),
-            'separate_items_with_commas' => sprintf( __( 'Seperate %s with commas', $this->textdomain ), $plural ),
-            'add_or_remove_items'        => sprintf( __( 'Add or remove %s', $this->textdomain ), $plural ),
-            'choose_from_most_used'      => sprintf( __( 'Choose from most used %s', $this->textdomain ), $plural ),
-            'not_found'                  => sprintf( __( 'No %s found', $this->textdomain ), $plural ),
+            'name'                       => sprintf( self::translate( '%s', $this->textdomain ), $plural ),
+            'singular_name'              => sprintf( self::translate( '%s', $this->textdomain ), $singular ),
+            'menu_name'                  => sprintf( self::translate( '%s', $this->textdomain ), $plural ),
+            'all_items'                  => sprintf( self::translate( 'All %s', $this->textdomain ), $plural ),
+            'edit_item'                  => sprintf( self::translate( 'Edit %s', $this->textdomain ), $singular ),
+            'view_item'                  => sprintf( self::translate( 'View %s', $this->textdomain ), $singular ),
+            'update_item'                => sprintf( self::translate( 'Update %s', $this->textdomain ), $singular ),
+            'add_new_item'               => sprintf( self::translate( 'Add New %s', $this->textdomain ), $singular ),
+            'new_item_name'              => sprintf( self::translate( 'New %s Name', $this->textdomain ), $singular ),
+            'parent_item'                => sprintf( self::translate( 'Parent %s', $this->textdomain ), $plural ),
+            'parent_item_colon'          => sprintf( self::translate( 'Parent %s:', $this->textdomain ), $plural ),
+            'search_items'               => sprintf( self::translate( 'Search %s', $this->textdomain ), $plural ),
+            'popular_items'              => sprintf( self::translate( 'Popular %s', $this->textdomain ), $plural ),
+            'separate_items_with_commas' => sprintf( self::translate( 'Seperate %s with commas', $this->textdomain ), $plural ),
+            'add_or_remove_items'        => sprintf( self::translate( 'Add or remove %s', $this->textdomain ), $plural ),
+            'choose_from_most_used'      => sprintf( self::translate( 'Choose from most used %s', $this->textdomain ), $plural ),
+            'not_found'                  => sprintf( self::translate( 'No %s found', $this->textdomain ), $plural ),
         );
 
         // Default options.
@@ -627,7 +633,7 @@ class CustomPostType {
                                 $taxonomy_object = get_taxonomy( $tax );
 
                                 // Column key is the slug, value is friendly name.
-                                $new_columns[ $tax ] = sprintf( __( '%s', $this->textdomain ), $taxonomy_object->labels->name );
+                                $new_columns[ $tax ] = sprintf( self::translate( '%s', $this->textdomain ), $taxonomy_object->labels->name );
                             }
                         }
                     }
@@ -701,7 +707,7 @@ class CustomPostType {
                     $taxonomy_object = get_taxonomy( $column );
 
                     // Echo no terms.
-                    printf( __( 'No %s', $this->textdomain ), $taxonomy_object->labels->name );
+                    printf( self::translate( 'No %s', $this->textdomain ), $taxonomy_object->labels->name );
                 }
 
             break;
@@ -827,7 +833,7 @@ class CustomPostType {
                         printf( ' &nbsp;<select name="%s" class="postform">', $tax_slug );
 
                         // Default show all.
-                        printf( '<option value="0">%s</option>', sprintf( __( 'Show all %s', $this->textdomain ), $tax->label ) );
+                        printf( '<option value="0">%s</option>', sprintf( self::translate( 'Show all %s', $this->textdomain ), $tax->label ) );
 
                         // Foreach term create an option field...
                         foreach ( $terms as $term ) {
@@ -1045,20 +1051,20 @@ class CustomPostType {
 
         $messages[$this->post_type_name] = array(
             0 => '',
-            1 => sprintf( __( '%s updated.', $this->textdomain ), $singular ),
-            2 => __( 'Custom field updated.', $this->textdomain ),
-            3 => __( 'Custom field deleted.', $this->textdomain ),
-            4 => sprintf( __( '%s updated.', $this->textdomain ), $singular ),
-            5 => isset( $_GET['revision'] ) ? sprintf( __( '%2$s restored to revision from %1$s', $this->textdomain ), wp_post_revision_title( (int) $_GET['revision'], false ), $singular ) : false,
-            6 => sprintf( __( '%s updated.', $this->textdomain ), $singular ),
-            7 => sprintf( __( '%s saved.', $this->textdomain ), $singular ),
-            8 => sprintf( __( '%s submitted.', $this->textdomain ), $singular ),
+            1 => sprintf( self::translate( '%s updated.', $this->textdomain ), $singular ),
+            2 => self::translate( 'Custom field updated.', $this->textdomain ),
+            3 => self::translate( 'Custom field deleted.', $this->textdomain ),
+            4 => sprintf( self::translate( '%s updated.', $this->textdomain ), $singular ),
+            5 => isset( $_GET['revision'] ) ? sprintf( self::translate( '%2$s restored to revision from %1$s', $this->textdomain ), wp_post_revision_title( (int) $_GET['revision'], false ), $singular ) : false,
+            6 => sprintf( self::translate( '%s updated.', $this->textdomain ), $singular ),
+            7 => sprintf( self::translate( '%s saved.', $this->textdomain ), $singular ),
+            8 => sprintf( self::translate( '%s submitted.', $this->textdomain ), $singular ),
             9 => sprintf(
-                __( '%2$s scheduled for: <strong>%1$s</strong>.', $this->textdomain ),
-                date_i18n( __( 'M j, Y @ G:i', $this->textdomain ), strtotime( $post->post_date ) ),
+                self::translate( '%2$s scheduled for: <strong>%1$s</strong>.', $this->textdomain ),
+                date_i18n( self::translate( 'M j, Y @ G:i', $this->textdomain ), strtotime( $post->post_date ) ),
                 $singular
             ),
-            10 => sprintf( __( '%s draft updated.', $this->textdomain ), $singular ),
+            10 => sprintf( self::translate( '%s draft updated.', $this->textdomain ), $singular ),
         );
 
         return $messages;

@@ -52,6 +52,12 @@ class Factory {
 				'slug' => $slug,
 			);
 
+			if (function_exists("pll_register_string")) {
+				pll_register_string(ucfirst($single), ucfirst($single), "sprucefactory");
+				pll_register_string(ucfirst($plural), ucfirst($plural), "sprucefactory");
+				pll_register_string($name, $name, "sprucefactory");
+			}
+
 			$this->defaultColumnsValues["post_type"] = $this->name;
 
 			if (!is_null($this->parentSlug)) {
@@ -179,7 +185,19 @@ class Factory {
 			'order' => $this->order,
 			"orderby" => $this->orderby,
     	), $this->entity);
-    }
+	}
+	
+	public function findBy($by, $limit=0) {
+		$limit = $limit != 0 ? $limit : $this->postsPerPage;
+		$query = array_merge(array(
+    		'post_type' => $this->name,
+			'post_status' => 'publish',
+			'posts_per_page' => $limit,
+			'order' => $this->order,
+			"orderby" => $this->orderby,
+    	), $by);
+    	return Timber::get_posts($query, $this->entity);
+	}
 
     public function getAllFields()
     {
