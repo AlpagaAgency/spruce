@@ -96,6 +96,7 @@ class Site extends TimberSite {
 		add_action( 'admin_menu', array( $this, 'remove_menus' ) );
 		add_action( 'init', array( $this, 'disable_emojis' ));
 		add_action('admin_head', array( $this, 'admin_styles' ));
+		add_action( 'login_enqueue_scripts', [$this, 'my_login_style'] );
 
 		return $this;
 	}
@@ -115,8 +116,19 @@ class Site extends TimberSite {
 		add_filter('show_admin_bar', '__return_false');
 		add_filter('upload_mimes', array($this, 'add_mimes_types_for_upload'));
 		add_filter( 'wpseo_metabox_prio', function() { return 'low'; } );
+		add_filter( "login_headerurl", [$this, "custom_loginlogo_url"] );
 
 		return $this;
+	}
+
+	function my_login_style()
+	{
+		print '<link rel="stylesheet" href="/app/themes/spruce/static/css/style.css" />';
+	}
+
+	public function custom_loginlogo_url($url) 
+	{
+		return "/";
 	}
 
 	public function define_twig_folder()
@@ -204,7 +216,27 @@ class Site extends TimberSite {
 		$context['site'] = $this;
 		if (function_exists("get_fields")) {
 			if (get_fields("options") !== null)
-				$context['options'] = get_fields('options');
+			$context['options'] = get_fields('options');
+		}
+		
+		if (function_exists("pll_current_language")) {
+			$context["locale"] = pll_current_language();
+		}
+
+		if (function_exists('pll_the_languages')) {
+			$context['language_switcher'] = pll_the_languages( $args = array(
+				'dropdown'			   		=> 	0, // display as list and not as dropdown
+				'echo'				   		=> 	0, // echoes the list
+				'hide_if_empty'		  		=> 	1, // hides languages with no posts ( or pages )
+				'show_flags'				=> 	0, // don't show flags
+				'show_names'				=> 	1, // show language names
+				'display_names_as'	   		=> 	'slug', // valid options are slug and name
+				'force_home'				=> 	0, // tries to find a translation
+				'hide_if_no_translation'	=> 	0, // don't hide the link if there is no translation
+				'hide_current'		   		=> 	1, // don't hide current language
+				'post_id'					=> 	null, // if not null, link to translations of post defined by post_id
+				'raw'						=> 	0, // set this to true to build your own custom language switcher
+			) );
 		}
 
 		$r = new Request();
