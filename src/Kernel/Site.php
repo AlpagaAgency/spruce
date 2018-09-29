@@ -281,6 +281,10 @@ class Site extends TimberSite {
 			shuffle($array);
 			return $array;
 		}));
+		
+		$twig->addFunction(new Twig_SimpleFunction('urlencode', function ($string) {
+			return urlencode($string);
+		}));
 
 		$twig->addFunction(new Twig_SimpleFunction('setUri', function($node,$variable) {
 			$get = $_GET;
