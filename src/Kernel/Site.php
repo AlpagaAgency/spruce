@@ -58,6 +58,16 @@ class Site extends TimberSite {
 		parent::__construct();
 	}
 
+	public function getFactories()
+	{
+		return $this->factories;
+	}
+
+	public function getFactory($name)
+	{
+		return $this->factories->get($name);
+	}
+
 	protected function add_theme_support()
 	{
 		add_theme_support( 'post-formats' );
@@ -233,7 +243,7 @@ class Site extends TimberSite {
 				'display_names_as'	   		=> 	'slug', // valid options are slug and name
 				'force_home'				=> 	0, // tries to find a translation
 				'hide_if_no_translation'	=> 	0, // don't hide the link if there is no translation
-				'hide_current'		   		=> 	1, // don't hide current language
+				'hide_current'		   		=> 	0, // don't hide current language
 				'post_id'					=> 	null, // if not null, link to translations of post defined by post_id
 				'raw'						=> 	0, // set this to true to build your own custom language switcher
 			) );
