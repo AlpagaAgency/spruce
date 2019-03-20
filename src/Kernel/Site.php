@@ -44,6 +44,7 @@ class Site extends TimberSite {
 	protected $customTplReference = "layouts/custom.twig";
 	protected $baseTplReference = "layouts/theme.twig";
 	protected $useDefaultTheme = true;
+	protected $useBlockWordpressEditor = false;
 
 	public function __construct() {
 		$this->tplReference = $this->useDefaultTheme ? $this->baseTplReference : $this->customTplReference;
@@ -129,6 +130,13 @@ class Site extends TimberSite {
 		add_filter('upload_mimes', array($this, 'add_mimes_types_for_upload'));
 		add_filter( 'wpseo_metabox_prio', function() { return 'low'; } );
 		add_filter( "login_headerurl", [$this, "custom_loginlogo_url"] );
+		
+		// disable Gutenberg 
+		if (!$this->useBlockWordpressEditor) 
+		{
+			add_filter('use_block_editor_for_post', '__return_false', 10);
+			add_filter('use_block_editor_for_post_type', '__return_false', 10);
+		}
 
 		return $this;
 	}
