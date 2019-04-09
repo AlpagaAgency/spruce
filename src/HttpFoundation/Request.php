@@ -118,4 +118,9 @@ class Request {
 		die;
 	}
 
+	public function selfRedirectionWithSuccess() {
+		header("location: " . $this->getUri() . "?success=true");
+		die;
+	}
+
 }
