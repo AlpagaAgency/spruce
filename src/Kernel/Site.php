@@ -45,6 +45,10 @@ class Site extends TimberSite {
 	protected $baseTplReference = "layouts/theme.twig";
 	protected $useDefaultTheme = true;
 	protected $useBlockWordpressEditor = false;
+	protected $wpCoreActionEnabled = [
+		"xmlRPC" => false,
+		"usersRest" => false,
+	];
 
 	public function __construct() {
 		$this->tplReference = $this->useDefaultTheme ? $this->baseTplReference : $this->customTplReference;
@@ -57,6 +61,25 @@ class Site extends TimberSite {
 		$this->define_twig_folder();
 		$this->add_factories();
 		parent::__construct();
+	}
+
+	protected function disableWpCoreAction($action)
+	{
+		$this->wpCoreActionEnabled = false;
+		return $this;
+	}
+
+	protected function enableWpCoreAction($action)
+	{
+		$this->wpCoreActionEnabled = false;
+		return $this;
+	}
+
+	protected function modifyWpCoreActions(array $actions)
+	{
+		$this->wpCoreActionEnabled = array_merge($this->wpCoreActionEnabled, $actions);
+
+		return true;
 	}
 
 	public function getFactories()
@@ -130,6 +153,23 @@ class Site extends TimberSite {
 		add_filter('upload_mimes', array($this, 'add_mimes_types_for_upload'));
 		add_filter( 'wpseo_metabox_prio', function() { return 'low'; } );
 		add_filter( "login_headerurl", [$this, "custom_loginlogo_url"] );
+
+		$wpCoreActionEnabled = $this->wpCoreActionEnabled;
+		// Improve security by removing XMLRPX and users list through the API
+		if ($wpCoreActionEnabled["xmlRPC"] === false)
+		{
+			add_filter('xmlrpc_enabled', '__return_false');
+		}
+
+		add_filter( 'rest_endpoints', function( $endpoints ) use ($wpCoreActionEnabled){
+			if ( isset( $endpoints['/wp/v2/users'] ) && $wpCoreActionEnabled["usersRest"] === false ) {
+				unset( $endpoints['/wp/v2/users'] );
+			}
+			if ( isset( $endpoints['/wp/v2/users/(?P<id>[\d]+)'] ) && $wpCoreActionEnabled["usersRest"] === false ) {
+				unset( $endpoints['/wp/v2/users/(?P<id>[\d]+)'] );
+			}
+			return $endpoints;
+		});
 		
 		// disable Gutenberg 
 		if (!$this->useBlockWordpressEditor) 
