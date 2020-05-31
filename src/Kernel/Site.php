@@ -271,20 +271,9 @@ class Site extends TimberSite {
 		//this is where you can register custom taxonomies
 	}
 
-	function add_to_context( $context ) {
-		$context['menu'] = new TimberMenu();
-		$context['site'] = $this;
-		if (function_exists("get_fields")) {
-			if (get_fields("options") !== null)
-			$context['options'] = get_fields('options');
-		}
-		
-		if (function_exists("pll_current_language")) {
-			$context["locale"] = pll_current_language();
-		}
-
+	public function getLanguages() {
 		if (function_exists('pll_the_languages')) {
-			$context['language_switcher'] = pll_the_languages( $args = array(
+			return pll_the_languages( $args = array(
 				'dropdown'			   		=> 	0, // display as list and not as dropdown
 				'echo'				   		=> 	0, // echoes the list
 				'hide_if_empty'		  		=> 	1, // hides languages with no posts ( or pages )
@@ -298,6 +287,22 @@ class Site extends TimberSite {
 				'raw'						=> 	0, // set this to true to build your own custom language switcher
 			) );
 		}
+		return [];
+	}
+
+	function add_to_context( $context ) {
+		$context['menu'] = new TimberMenu();
+		$context['site'] = $this;
+		if (function_exists("get_fields")) {
+			if (get_fields("options") !== null)
+			$context['options'] = get_fields('options');
+		}
+		
+		if (function_exists("pll_current_language")) {
+			$context["locale"] = pll_current_language();
+		}
+
+		$context['language_switcher'] = $this->getLanguages();
 
 		$r = new Request();
 		$context["realpath"] =  $r->getScheme() . "://" . $r->getHost() . $r->getUri();
