@@ -4,6 +4,7 @@ namespace Spruce\Model;
 
 use Spruce\Engine\CustomPostType;
 use Timber\Timber as Timber;
+use Spruce\Utility\Debug;
 
 class Factory {
 
@@ -184,6 +185,7 @@ class Factory {
 			'posts_per_page' => $limit,
 			'order' => $this->order,
 			"orderby" => $this->orderby,
+			"paged" => get_query_var('paged')
     	), $this->entity);
 	}
 	
@@ -223,21 +225,6 @@ class Factory {
 
     	$categorySlug = is_array($categorySlug) ? $categorySlug : [$categorySlug];
 
-
-		// $test = Timber::get_posts(array(
-    	// 	'post_type' => $this->name,
-		// 	'post_status' => 'publish',
-		// 	'posts_per_page' => $limit,
-		// 	'order' => $this->order,
-		// 	'tax_query' => array(
-		// 		array(
-		// 			'taxonomy' => $name,
-		// 			'field'    => 'slug',
-		// 			'terms'    => $categorySlug,
-		// 		)
-		// 	)
-    	// ), $this->entity);
-
 		$test = Timber::get_posts(array(
 			'post_type' => $this->name,
 			'post_status' => 'publish',
@@ -252,9 +239,6 @@ class Factory {
 				)
 			)
 		), $this->entity);
-
-		// s($test);
-
     	return $test;
     }
 
@@ -269,7 +253,43 @@ class Factory {
     public function getCategories($name=false) {
     	$name = $name == false ? $this->name : $name;
     	return Timber::get_terms($name.'category');
-    }
+	}
+	
+	public function count($type = "publish") 
+	{
+		if (in_array($type, [
+			"publish",
+			"future",
+			"draft",
+			"pending",
+			"private",
+			"trash",
+			"auto-draft",
+			"inherit",
+			"request-pending",
+			"request-confirmed",
+			"request-failed",
+			"request-completed",
+			"acf-disabled",
+		])) {
+			$counts = wp_count_posts($this->name);
+			return $counts->$type;
+		}
+
+		return null;
+	}
+
+	public function getPagination($limit = 0)
+	{
+		$limit = $limit == 0 ? $this->postsPerPage : $limit;
+		$big = 999999999; // need an unlikely integer
+		return paginate_links( array(
+			'base' => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
+			'format' => '?paged=%#%',
+			'current' => max( 1, get_query_var('paged') ),
+			'total' => ceil($this->count() / $limit),
+		) );
+	}
 
     public function getGenericShortCode($attrs) {
 		// Attributes
