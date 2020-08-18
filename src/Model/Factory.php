@@ -147,6 +147,7 @@ class Factory {
 		$this->cpt->register();
 		foreach ($this->taxonomies as $key => $tax) 
 		{
+			$tax->posttype($this->name);
 			$tax->register();
 		}
 	}
@@ -180,8 +181,7 @@ class Factory {
 		];
 
 		$tax = new Taxonomy($attrs);
-		$tax->posttype($this->name);
-		$taxonomies[$attrs["name"]] = $tax;
+		$this->taxonomies[$attrs["name"]] = $tax;
 		return $this;
     }
 
