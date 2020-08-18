@@ -2,7 +2,9 @@
 
 namespace Spruce\Model;
 
-use Spruce\Engine\CustomPostType;
+// use Spruce\Engine\CustomPostType;
+use PostTypes\PostType;
+use PostTypes\Taxonomy;
 use Timber\Timber as Timber;
 use Spruce\Utility\Debug;
 
@@ -25,6 +27,7 @@ class Factory {
 	protected $hasCategories = false;
 	protected $entity = "Timber\Post";
 	protected $categoryEntity = "Timber\Term";
+	protected $taxonomies = [];
 
 	protected $defaultColumns = [
         'name' => 'post_name',
@@ -47,7 +50,7 @@ class Factory {
 			$slug = !is_null($this->slug)?$this->slug:$this->name;
 			$plural = !is_null($this->plural)?$this->plural:$name."s";
 			$options = array(
-				'post_type_name' => $name,
+				'name' => $name,
 				'singular' => ucfirst($single),
 				'plural' => ucfirst($plural),
 				'slug' => $slug,
@@ -65,7 +68,7 @@ class Factory {
 				$options["parent_slug"] = $this->parentSlug;
 			}
 
-			$this->cpt = new CustomPostType($options, array(
+			$this->cpt = new PostType($options, array(
 				'supports' => $this->support,
 				'has_archive' => $this->hasArchive,
 				'show_in_menu' => $this->showInMenu,
@@ -141,6 +144,11 @@ class Factory {
 
 		$this->createShortCodes();
 		$this->addACF();
+		$this->cpt->register();
+		foreach ($this->taxonomies as $key => $tax) 
+		{
+			$tax->register();
+		}
 	}
 
 	public function addContext($context) {
@@ -164,17 +172,17 @@ class Factory {
 
     protected function addCategories($name=false,$singular=false,$plural=false)
     {
-
-    	$name = $name == false ? $this->name : $name;
-    	$singular = $singular == false ? 'Category' : $singular;
-    	$plural = $plural == false ? 'Categories' : $plural;
-
-    	$this->cpt->register_taxonomy(array(
-			'taxonomy_name' => $name.'category',
-			'singular' => $singular,
-			'plural' => $plural,
+		$attrs = [
+			"name" => ($name == false ? $this->name : $name) . 'category',
+			"singular" => $singular == false ? 'Category' : $singular,
+			"plural" => $plural == false ? 'Categories' : $plural,
 			'slug' => $name.'-category'
-		));
+		];
+
+		$tax = new Taxonomy($attrs);
+		$tax->posttype($this->name);
+		$taxonomies[$attrs["name"]] = $tax;
+		return $this;
     }
 
     public function findPublished($limit=0) {

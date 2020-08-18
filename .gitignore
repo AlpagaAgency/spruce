@@ -17,3 +17,5 @@ ehthumbs.db
 /node_modules
 Gruntfile.js
 package.json
+composer.lock
+/vendor

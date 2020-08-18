@@ -18,7 +18,8 @@
         }
     ],
     "require": {
-        "php": ">=7.0.0"
+        "php": ">=7.0.0",
+        "jjgrainger/posttypes": "^2.1"
     },
     "autoload": {
         "psr-4": {
