@@ -331,12 +331,11 @@ class Factory {
 		endif;
 	}
 
-	static public function getTranslatedPostFromId($id) {
-		if( function_exists('pll_get_post') ):
-			return new $this->entity(pll_get_post($id));
-		endif;
-	}
-
+	// static public function getTranslatedPostFromId($id) {
+	// 	if( function_exists('pll_get_post') ):
+	// 		return new $this->entity(pll_get_post($id));
+	// 	endif;
+	// }
 }
 
 

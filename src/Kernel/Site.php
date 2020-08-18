@@ -59,8 +59,8 @@ class Site extends TimberSite {
 		$this->add_filters();
 		$this->add_menu_location();
 		$this->define_twig_folder();
-		$this->add_factories();
 		parent::__construct();
+		$this->add_factories();
 	}
 
 	protected function disableWpCoreAction($action)
