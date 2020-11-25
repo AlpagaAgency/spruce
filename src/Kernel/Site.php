@@ -27,6 +27,7 @@ use Exception;
 class Site extends TimberSite {
 
 	protected $menus = [
+		'account_menu' => 'Account Menu',
 		'header_menu' => 'Header Menu',
 		'social_menu' => 'Social Menu',
 		'footer_menu' => 'Footer Menu',
