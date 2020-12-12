@@ -28,6 +28,7 @@ class Factory {
 	protected $entity = "Timber\Post";
 	protected $categoryEntity = "Timber\Term";
 	protected $taxonomies = [];
+	protected $hierarchical = false;
 
 	protected $defaultColumns = [
         'name' => 'post_name',
@@ -68,11 +69,17 @@ class Factory {
 				$options["parent_slug"] = $this->parentSlug;
 			}
 
-			$this->cpt = new PostType($options, array(
-				'supports' => $this->support,
+			$attributes = array(
 				'has_archive' => $this->hasArchive,
 				'show_in_menu' => $this->showInMenu,
-			));
+			);
+			if ($this->hierarchical) {
+				$attributes["hierarchical"] = true;
+				$this->support[] = "page-attributes";
+			}
+			$attributes['supports'] = $this->support;
+
+			$this->cpt = new PostType($options, $attributes);
 
 			if ($this->hasCategories) {
 				$this->addCategories();
