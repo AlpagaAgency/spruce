@@ -27,7 +27,7 @@ use Exception;
 class Site extends TimberSite {
 
 	const POST_TYPES = [
-        "default" => "App\Model\Entity\Post"
+        "default" => "Spruce\Model\Post"
     ];
 
 	protected $menus = [
