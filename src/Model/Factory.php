@@ -346,6 +346,45 @@ class Factory {
 		endif;
 	}
 
+	public function findByParent($parent = 0, $limit=0) {
+    	$limit = $limit != 0 ? $limit : $this->postsPerPage;
+    	return Timber::get_posts(array(
+            'post_parent' => $parent,
+    		'post_type' => $this->name,
+			'post_status' => 'publish',
+			'posts_per_page' => $limit,
+			'order' => $this->order,
+			"orderby" => $this->orderby,
+			"paged" => get_query_var('paged')
+    	), $this->entity);
+    }
+    
+    public function findTopLevel($limit = 0) {
+        return $this->findByParent(0, $limit);
+	}
+
+	protected function levelList($items) {
+		$list = [];
+		foreach ($items as $item) {
+			$elm = [
+				"id" => $item->ID,
+				"title" => $item->title,
+				"name" => $item->title,
+			];
+			$children = $item->getChildren();
+			if(count($children)) {
+				$elm["children"] = $this->levelList($children);
+			}
+			$list[] = $elm;
+		}
+		return $list;
+	}
+	
+	public function findAllByLevel()
+	{
+		return $this->levelList($this->findByParent(0, -1));
+	}
+
 	// static public function getTranslatedPostFromId($id) {
 	// 	if( function_exists('pll_get_post') ):
 	// 		return new $this->entity(pll_get_post($id));

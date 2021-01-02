@@ -26,6 +26,10 @@ use Exception;
 
 class Site extends TimberSite {
 
+	const POST_TYPES = [
+        "default" => "App\Model\Entity\Post"
+    ];
+
 	protected $menus = [
 		'account_menu' => 'Account Menu',
 		'header_menu' => 'Header Menu',
@@ -446,6 +450,16 @@ class Site extends TimberSite {
 			return [];
 		//
 		return $acf[$node]["value"];
+	}
+
+	public function getPagesFromTemplate($tplName) {
+		return Timber::get_posts(array(
+			'meta_key' => '_wp_page_template',
+    		'meta_value' => sprintf('tpl-%s.php', strtolower($tplName)),
+			'post_type' => "page",
+			'post_status' => 'publish',
+			'posts_per_page' => -1
+		), Site::POST_TYPES["default"]);
 	}
 
 }
