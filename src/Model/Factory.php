@@ -228,7 +228,7 @@ class Factory {
     	return $fields;
     }
 
-    protected function findByCategoriesEngine($categorySlug,$limit,$categoryName) {
+    protected function findByCategoriesEngine($categorySlug,$limit,$categoryName, $exclude = false) {
     	$limit = $limit != 0 ? $limit : $this->postsPerPage;
 
     	$name = sprintf(
@@ -239,8 +239,7 @@ class Factory {
     	);
 
     	$categorySlug = is_array($categorySlug) ? $categorySlug : [$categorySlug];
-
-		$test = Timber::get_posts(array(
+		$args = array(
 			'post_type' => $this->name,
 			'post_status' => 'publish',
 			'posts_per_page' => $limit,
@@ -249,20 +248,27 @@ class Factory {
 			'tax_query' => array(
 				array(
 					'taxonomy' => $name,
-					'field'    => 'slug',
+					'field'    => 'term_id',
 					'terms'    => $categorySlug,
 				)
 			)
-		), $this->entity);
+		);
+		
+		if ($exclude != false) {
+			$args["post__not_in"] = is_array($exclude) ? $exclude : [$exclude];
+		}
+
+		$test = Timber::get_posts($args, $this->entity);
+
     	return $test;
     }
 
-    public function findAllByCategory($categorySlug,$limit=0,$categoryName=false) {
-    	return $this->findByCategoriesEngine($categorySlug,$limit,$categoryName);
+    public function findAllByCategory($categorySlug,$limit=0,$categoryName=false, $exclude = false) {
+    	return $this->findByCategoriesEngine($categorySlug,$limit,$categoryName, $exclude);
     }
 
-    public function findAllByCategories($categoriesSlug,$limit=0,$categoryName=false) {
-    	return $this->findByCategoriesEngine($categoriesSlug,$limit,$categoryName);
+    public function findAllByCategories($categoriesSlug,$limit=0,$categoryName=false, $exclude = false) {
+    	return $this->findByCategoriesEngine($categoriesSlug,$limit,$categoryName, $exclude);
     }
 
     public function getCategories($name=false) {

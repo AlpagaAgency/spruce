@@ -98,6 +98,15 @@ class Post extends TimberPost {
             "suppress_filters" => false,
         ], $this->getPostTypeClassName());
     }
+    
+    public function getRelated($nb=3) 
+    {
+        return Timber::get_posts([
+                'category__in' => wp_get_post_categories( $this->ID ), 
+                'numberposts'  => $nb, 
+                'post__not_in' => array( $this->ID ),       
+        ], $this->getPostTypeClassName());
+    }
 
     protected function getPostTypeClassName() {
         return isset(Site::POST_TYPES[$this->post_type]) 
@@ -135,6 +144,10 @@ class Post extends TimberPost {
             $this->parentsIds = get_post_ancestors($this->ID);
         }
         return $this->parentsIds;
+    }
+
+    public function acf($node) {
+        return $this->get_field($node);
     }
 
 }

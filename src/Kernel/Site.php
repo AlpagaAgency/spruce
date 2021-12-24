@@ -31,7 +31,7 @@ class Site extends TimberSite {
     ];
 
 	protected $menus = [
-		'account_menu' => 'Account Menu',
+		// 'account_menu' => 'Account Menu',
 		'header_menu' => 'Header Menu',
 		'social_menu' => 'Social Menu',
 		'footer_menu' => 'Footer Menu',
@@ -46,6 +46,7 @@ class Site extends TimberSite {
 
 	protected $factories = array();
 	public $tplReference;
+	protected $removeBlogPosts = false;
 	protected $customTplReference = "layouts/custom.twig";
 	protected $baseTplReference = "layouts/theme.twig";
 	protected $useDefaultTheme = true;
@@ -64,8 +65,29 @@ class Site extends TimberSite {
 		$this->add_filters();
 		$this->add_menu_location();
 		$this->define_twig_folder();
+		if ($this->removeBlogPosts) {
+			$this->removeBlogPosts();
+		}
 		parent::__construct();
 		$this->add_factories();
+	}
+
+	protected function removeBlogPosts() {
+		// Remove side menu
+		add_action( 'admin_menu', function () {
+			remove_menu_page( 'edit.php' );
+		});
+
+		// Remove +New post in top Admin Menu Bar
+		add_action( 'admin_bar_menu',function ( $wp_admin_bar ) {
+			$wp_admin_bar->remove_node( 'new-post' );
+		}, 999 );
+
+		// Remove Quick Draft Dashboard Widget
+		add_action( 'wp_dashboard_setup', function (){
+			remove_meta_box( 'dashboard_quick_press', 'dashboard', 'side' );
+		}, 999 );
+
 	}
 
 	protected function disableWpCoreAction($action)
@@ -462,4 +484,12 @@ class Site extends TimberSite {
 		), Site::POST_TYPES["default"]);
 	}
 
+	public function getPosts($args, $tpl = "default") {
+		if ($tpl == "default") $tpl = Site::POST_TYPES["default"];
+		return Timber::get_posts($args, $tpl);
+	}
+
+	public function getCurrentPost() {
+		return new \Spruce\Model\Post();
+	}
 }
