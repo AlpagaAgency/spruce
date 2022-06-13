@@ -16,6 +16,14 @@ class Post extends TimberPost {
     protected $ancestors = null;
     protected $picture = null;
 
+    public function cache($name, $args = null) {
+        if (env("USE_CACHE")) {
+            return \Timber\Helper::transient( sprintf('lumber_transient_product_%s_%s', get_the_ID(), $name), [ $this, $name ] , env("CACHE_TIME") );
+        } else {
+            return call_user_func([ $this, $name ], $args);
+        }
+    }
+
 	public function getLanguage() {
 		if( function_exists('pll_get_post_language') ):
 			return pll_get_post_language($this->id);
@@ -99,13 +107,17 @@ class Post extends TimberPost {
         ], $this->getPostTypeClassName());
     }
     
-    public function getRelated($nb=3) 
+    public function getRelated($nb=3, $options=[]) 
     {
-        return Timber::get_posts([
-                'category__in' => wp_get_post_categories( $this->ID ), 
-                'numberposts'  => $nb, 
-                'post__not_in' => array( $this->ID ),       
-        ], $this->getPostTypeClassName());
+        $args = [
+            'category__in' => wp_get_post_categories( $this->ID ), 
+            'numberposts'  => $nb, 
+            'post__not_in' => array( $this->ID ),
+        ];
+
+        $args = array_merge($args, $options);
+
+        return Timber::get_posts($args, $this->getPostTypeClassName());
     }
 
     protected function getPostTypeClassName() {

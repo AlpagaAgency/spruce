@@ -296,7 +296,6 @@ class Factory {
 			$counts = wp_count_posts($this->name);
 			return $counts->$type;
 		}
-
 		return null;
 	}
 
