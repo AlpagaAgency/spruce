@@ -437,7 +437,7 @@ class Site extends TimberSite {
 		}));
 
 		$twig->addFunction(new Twig_SimpleFunction('get_field', function($fieldName, $id) {
-			return get_field($fieldName, $id);
+			return (function_exists("get_field")) ? get_field($fieldName, $id) : $fieldName;
 		}));
 
 		$twig->addFunction(new Twig_SimpleFunction('pll__', function( $text ) {
