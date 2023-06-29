@@ -178,13 +178,13 @@ class Factory {
 
     }
 
-    protected function addCategories($name=false,$singular=false,$plural=false)
+    protected function addCategories($name=false,$singular=false,$plural=false,$slug=false)
     {
 		$attrs = [
 			"name" => ($name == false ? $this->name : $name) . 'category',
 			"singular" => $singular == false ? 'Category' : $singular,
 			"plural" => $plural == false ? 'Categories' : $plural,
-			'slug' => $name.'-category'
+			'slug' => $slug == false ? $name.'-category' : $slug
 		];
 
 		$tax = new Taxonomy($attrs);
